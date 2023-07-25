@@ -4,12 +4,13 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"io"
 	"mime"
 	"net/http"
 	"net/url"
 
-	"github.com/chrisgavin/paginated-go-gh/internal/merge"
+	"dario.cat/mergo"
 	"github.com/cli/go-gh/pkg/api"
 	"github.com/tomnomnom/linkheader"
 )
@@ -85,7 +86,8 @@ func (paginating *PaginatingRESTClient) RequestWithContext(ctx context.Context, 
 	}
 
 	var httpResponse *http.Response
-	var combinedResponse interface{}
+	var combinedMap map[string]interface{}
+	var combinedSlice []interface{}
 	for path != "" {
 		httpResponse, err = paginating.client.RequestWithContext(ctx, method, path, body)
 		if err != nil {
@@ -109,7 +111,18 @@ func (paginating *PaginatingRESTClient) RequestWithContext(ctx context.Context, 
 		if err != nil {
 			return nil, err
 		}
-		merge.MergeResponses(&combinedResponse, &response)
+		switch response := response.(type) {
+		case []interface{}:
+			err = mergo.Merge(&combinedSlice, &response, mergo.WithAppendSlice)
+		case map[string]interface{}:
+			err = mergo.Merge(&combinedMap, &response, mergo.WithAppendSlice)
+		default:
+			err = errors.New("unexpected response type")
+		}
+
+		if err != nil {
+			return nil, err
+		}
 
 		links := linkheader.Parse(httpResponse.Header.Get("Link"))
 		next := links.FilterByRel("next")
@@ -120,7 +133,12 @@ func (paginating *PaginatingRESTClient) RequestWithContext(ctx context.Context, 
 		}
 	}
 
-	marshaled, err := json.Marshal(combinedResponse)
+	var marshaled []byte
+	if combinedMap != nil {
+		marshaled, err = json.Marshal(combinedMap)
+	} else {
+		marshaled, err = json.Marshal(combinedSlice)
+	}
 	if err != nil {
 		return nil, err
 	}
