@@ -1,4 +1,4 @@
-module github.com/chrisgavin/paginated-go-gh
+module github.com/chrisgavin/paginated-go-gh/v2
 
 go 1.23.0
 
