@@ -11,7 +11,7 @@ import (
 	"net/url"
 
 	"dario.cat/mergo"
-	"github.com/cli/go-gh/pkg/api"
+	"github.com/cli/go-gh/v2/pkg/api"
 	"github.com/tomnomnom/linkheader"
 )
 
