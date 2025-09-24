@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:experimental
-FROM golang:latest@sha256:2d17ffd12a2cdb25d4a633ad25f8dc29608ed84f31b3b983427d825280427095 AS ci
+FROM golang:latest@sha256:8305f5fa8ea63c7b5bc85bd223ccc62941f852318ebfbd22f53bbd0b358c07e1 AS ci
 COPY ./ /src/
 WORKDIR /src/
 RUN go get ./...
