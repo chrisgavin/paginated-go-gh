@@ -20,7 +20,7 @@ require (
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/thlib/go-timezone-local v0.0.7 // indirect
 	golang.org/x/sys v0.36.0 // indirect
-	golang.org/x/term v0.30.0 // indirect
+	golang.org/x/term v0.35.0 // indirect
 	golang.org/x/text v0.23.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
